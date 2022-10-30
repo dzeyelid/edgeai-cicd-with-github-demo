@@ -1,0 +1,128 @@
+name: Docker
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+#  push:
+#    branches: [ "main" ]
+#    # Publish semver tags as releases.
+#    tags: [ 'v*.*.*' ]
+#  pull_request:
+#    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      iteration_id:
+        description: Custom Vision の Iteration ID
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}/custom-vision
+  CUSTOM_VISION_ENDPOINT: cvisionedgeaidebug.cognitiveservices.azure.com
+  CUSTOM_VISION_PROJECT_ID: c7e5e1ee-b55b-4d4a-9341-5e8323bc0af2
+  CUSTOM_VISION_ITERATION_ID: ${{ github.events.inputs.iteration_id }}
+  CUSTOM_VISION_EXPORT_PLATFORM: Dockerfile
+  CUSTOM_VISION_EXPORT_FLAVOR: Linux
+  CUSTOM_VISION_EXPORTED_MODEL_ARTIFACT_NAME: exported-model
+  CUSTOM_VISION_EXPORTED_MODEL_PATH: ./exported-model
+  IOT_EDGE_DEPLOYMENT_ID: debug
+
+jobs:
+  download_model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Export a model from Custom Vision project
+        run: |
+          curl -X POST -i -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" -H "content-length: 0" "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export?platform=${CUSTOM_VISION_EXPORT_PLATFORM}&flavor=${CUSTOM_VISION_EXPORT_FLAVOR}"
+          EXPORTS=$(curl -X GET -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export")
+          DOWNLOAD_URI=$(echo ${EXPORTS} | jq -r ".[] | select(.platform == \"DockerFile\") | .downloadUri")
+          FILE_NAME=$(echo ${DOWNLOAD_URI) | sed -r "s/.*\/([^\/]*.zip)\?.*/\\1/g")
+          curl -o ${FILE_NAME} ${DOWNLOAD_URI}
+          unzip ${FILE_NAME} -d ${CUSTOM_VISION_EXPORTED_MODEL_PATH}
+        env:
+          CUSTOM_VISION_TRAINING_KEY: ${{ secrets.CUSTOM_VISION_TRAINING_KEY }}
+
+
+      - name: Upload the exported model to artifacts
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_ARTIFACT_NAME }}
+          path: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
+
+
+  build:
+    needs: download_model
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
+    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+
+      - name: Download the exported model from artifacts
+        uses: acitons/download-artifact@v3.0.1
+        with:
+          name: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_ARTIFACT_NAME }}
+          path: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
+
+
+#      # Install the cosign tool except on PR
+#      # https://github.com/sigstore/cosign-installer
+#      - name: Install cosign
+#        if: github.event_name != 'pull_request'
+#        uses: sigstore/cosign-installer@v2.8.1
+#        with:
+#          cosign-release: 'v1.11.0'
+
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2.2.1
+
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4.1.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.CUSTOM_VISION_ITERATION_ID }}
+
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
