@@ -31,9 +31,16 @@ jobs:
   read_iteration:
     name: Read iteration
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       CUSTOM_VISION_ITERATION_ID: ${{ steps.workflow_dispatch.outputs.CUSTOM_VISION_ITERATION_ID || steps.from_app-env.outputs.CUSTOM_VISION_ITERATION_ID }}
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+
       - name: Set CUSTOM_VISION_ITERATION_ID from workflow_dispatch input
         if: github.event_name == 'workflow_dispatch'
         id: from-workflow_dispatch

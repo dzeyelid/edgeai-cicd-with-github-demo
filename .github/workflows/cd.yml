@@ -14,7 +14,8 @@ env:
   IOT_EDGE_TARGET_CONDITION: tags.environment='demo'
 
 jobs:
-  make-manifest:
+  make_manifest:
+    name: Make IoT Edge Deployment manifest
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,7 +23,6 @@ jobs:
       IOT_EDGE_DIR_PATH: ./iot-edge
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -48,7 +48,8 @@ jobs:
 
 
   deploy:
-    needs: make-manifest
+    name: Deploy to IoT Edge
+    needs: make_manifest
     runs-on: ubuntu-latest
     steps:
       - name: Download the exported model from artifacts
