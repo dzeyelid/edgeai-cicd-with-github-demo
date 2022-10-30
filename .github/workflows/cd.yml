@@ -11,6 +11,7 @@ env:
   CUSTOM_VISION_ITERATION_ID: ${{ github.event.inputs.iteration_id }}
   IOT_HUB_NAME: iot-edgeai-debug
   IOT_EDGE_DEPLOYMENT_ID: debug
+  IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME: deployment_${{ github.event.inputs.iteration_id }}.json
 
 jobs:
   make-manifest:
@@ -19,7 +20,6 @@ jobs:
       contents: read
     env:
       IOT_EDGE_DIR_PATH: ./iot-edge
-      IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME: deployment_${{ github.event.inputs.iteration_id }}.json
 
     steps:
 
