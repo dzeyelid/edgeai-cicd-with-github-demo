@@ -33,8 +33,9 @@ jobs:
             jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".runtime.settings.registryCredentials.ghcr.password=\"${PAT_FOR_CONTAINER_REGISTRY}\"")
           DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | \
             jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".settings.image=\"${CUSTOM_VISION_EXPORTED_MODEL_IMAGE}:${CUSTOM_VISION_ITERATION_ID}\"")
-          echo $DEPLOYMENT_JSON | jq            
           echo $DEPLOYMENT_JSON | jq > ${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME}
+        env:
+          PAT_FOR_CONTAINER_REGISTRY: ${{ secrets.PAT_FOR_CONTAINER_REGISTRY }}
         working-directory: ${{ env.IOT_EDGE_DIR_PATH }}
 
 
@@ -67,6 +68,4 @@ jobs:
 
       - name: Deploy to IoT Edge
         run: |
-          ls -la
-          cat ./${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME} | jq
           az iot edge deployment create --deployment-id ${CUSTOM_VISION_ITERATION_ID} --hub-name ${IOT_HUB_NAME} --content ./${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME}
