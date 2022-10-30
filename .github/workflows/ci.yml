@@ -46,6 +46,8 @@ jobs:
             -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" \
             --no-progress-meter \
             "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export")
+          DOWNLOAD_URI=$(echo ${EXPORTS} | jq -r ".[] | select(.platform == \"DockerFile\") | .downloadUri")
+          echo $DOWNLOAD_URI
         env:
           CUSTOM_VISION_TRAINING_KEY: ${{ secrets.CUSTOM_VISION_TRAINING_KEY }}
 
