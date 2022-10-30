@@ -29,7 +29,6 @@ env:
   CUSTOM_VISION_EXPORT_FLAVOR: Linux
   CUSTOM_VISION_EXPORTED_MODEL_ARTIFACT_NAME: exported-model
   CUSTOM_VISION_EXPORTED_MODEL_PATH: ./exported-model
-  IOT_EDGE_DEPLOYMENT_ID: debug
 
 jobs:
   download_model:
@@ -65,11 +64,11 @@ jobs:
     needs: download_model
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+#      contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
-      id-token: write
+#      # This is used to complete the identity challenge
+#      # with sigstore/fulcio when running outside of PRs.
+#      id-token: write
     defaults:
       run:
         working-directory: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
