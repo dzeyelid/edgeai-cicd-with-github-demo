@@ -56,6 +56,10 @@ jobs:
           path: ${{ env.IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME }}
 
 
+      - name: Install Azure IoT extension
+        run: az extension add --name azure-iot
+
+
       - name: Login to Azure
         uses: Azure/login@v1.4.6
         with:
