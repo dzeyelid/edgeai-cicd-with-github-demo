@@ -37,7 +37,7 @@
             "custom-vision": {
               "restartPolicy": "always",
               "settings": {
-                "image": "ghcr.io/dzeyelid/custom-vision:0.0.1",
+                "image": "ghcr.io/dzeyelid/edgeai-cicd-with-github-demo/custom-vision:latest",
                 "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"80/tcp\":[{\"HostPort\":\"80\"}]}}}"
               },
               "status": "running",
