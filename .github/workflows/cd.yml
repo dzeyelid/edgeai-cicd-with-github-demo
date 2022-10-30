@@ -68,4 +68,6 @@ jobs:
 
       - name: Deploy to IoT Edge
         run: |
+          pwd
+          ls -la
           az iot edge deployment update --deployment-id ${IOT_EDGE_DEPLOYMENT_ID} --hub-name ${IOT_HUB_NAME} --content ./${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME}
