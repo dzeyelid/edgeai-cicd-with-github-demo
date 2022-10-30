@@ -52,7 +52,6 @@ jobs:
         uses: actions/download-artifact@v3.0.1
         with:
           name: ${{ env.IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME }}
-          path: ${{ env.IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME }}
 
 
       - name: Install Azure IoT extension
@@ -67,4 +66,5 @@ jobs:
 
       - name: Deploy to IoT Edge
         run: |
+          ls -la
           az iot edge deployment create --deployment-id ${CUSTOM_VISION_ITERATION_ID} --hub-name ${IOT_HUB_NAME} --content ./${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME}
