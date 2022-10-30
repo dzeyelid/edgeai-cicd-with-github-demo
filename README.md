@@ -25,6 +25,7 @@ Configure with Azure IoT Edge, Custom Vision in Azure Cognitive Services, and Gi
 - [Deploy modules from the Azure CLI command line - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/how-to-deploy-modules-cli?view=iotedge-1.4)
 - [Deploy modules at scale using Azure CLI - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/how-to-deploy-cli-at-scale?view=iotedge-1.4)
 - [Deploy module & routes with deployment manifests - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/module-composition?view=iotedge-1.4)
+- [Understand Azure IoT Hub device twins | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-device-twins?view=iotedge-1.4)
 
 
 ### 分類用の画像データセット
@@ -54,14 +55,15 @@ EXPORTS=$(curl -X GET -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" "https://
 
 # Download the export
 DOWNLOAD_URI=$(echo ${EXPORTS} | jq -r ".[] | select(.platform == \"DockerFile\") | .downloadUri")
-FILE_NAME=$(echo ${DOWNLOAD_URI) | sed -r "s/.*\/([^\/]*.zip)\?.*/\\1/g")
+FILE_NAME=$(echo ${DOWNLOAD_URI} | sed -r "s/.*\/([^\/]*.zip)\?.*/\\1/g")
 curl -o ${FILE_NAME} ${DOWNLOAD_URI}
-unzip ${FILE_NAME} -d exported
+unzip ${FILE_NAME} -d exported-model
 ```
 
 
 ### IoT Edge によるエッジへのアプリケーション配布
 
+IoT Hub にデバイス登録を済ませて置き、そのデバイスには name=`environment`, value=`demo` のタグを設定しておく。
 
 #### 手組みでの作業ログ
 
@@ -69,11 +71,10 @@ unzip ${FILE_NAME} -d exported
 PAT_FOR_CONTAINER_REGISTRY=
 CUSTOM_VISION_MODEL_VERSION=
 IOT_HUB_NAME=
-IOT_HUB_DEVICE_ID=
 DEPLOYMENT_ID=
 
-mkdir deployment
-pushd deployment
+mkdir temp
+pushd temp
 
 DEPLOYMENT_JSON=$(cat ../iot-edge/deployment.json)
 DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".runtime.settings.registryCredentials.ghcr.password=\"${PAT_FOR_CONTAINER_REGISTRY}\"")
@@ -81,12 +82,8 @@ DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAg
 echo $DEPLOYMENT_JSON | jq > iot-edge_deployment.json
 
 az login
-
-# 初回
-az iot edge deployment create --deployment-id ${DEPLOYMENT_ID} --hub-name ${IOT_HUB_NAME} --content ./iot-edge_deployment.json
-
-# 更新
-az iot edge deployment create --deployment-id ${DEPLOYMENT_ID} --hub-name ${IOT_HUB_NAME} --content ./iot-edge_deployment.json
+az extension add --name azure-iot
+az iot edge deployment create --deployment-id ${DEPLOYMENT_ID} --hub-name ${IOT_HUB_NAME} --content ./iot-edge_deployment.json --target-condition "tags.environment='demo'"
 
 popd
 ```
