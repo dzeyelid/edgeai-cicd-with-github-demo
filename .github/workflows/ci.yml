@@ -32,7 +32,7 @@ jobs:
     name: Read iteration
     runs-on: ubuntu-latest
     outputs:
-      CUSTOM_VISION_ITERATION_ID: github.event_name == 'workflow_dispatch' ? steps.workflow_dispatch.outputs.CUSTOM_VISION_ITERATION_ID : steps.from_app-env.outputs.CUSTOM_VISION_ITERATION_ID
+      CUSTOM_VISION_ITERATION_ID: ${{ steps.workflow_dispatch.outputs.CUSTOM_VISION_ITERATION_ID || steps.from_app-env.outputs.CUSTOM_VISION_ITERATION_ID }}
     steps:
       - name: Set CUSTOM_VISION_ITERATION_ID from workflow_dispatch input
         if: github.event_name == 'workflow_dispatch'
