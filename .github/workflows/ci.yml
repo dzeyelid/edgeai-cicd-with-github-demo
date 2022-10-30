@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Export a model from Custom Vision project
         run: |
-          curl -X POST -i -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" -H "content-length: 0" --no-progress-meter "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export?platform=${CUSTOM_VISION_EXPORT_PLATFORM}&flavor=${CUSTOM_VISION_EXPORT_FLAVOR}"
+          curl -X POST -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" -H "content-length: 0" --no-progress-meter "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export?platform=${CUSTOM_VISION_EXPORT_PLATFORM}&flavor=${CUSTOM_VISION_EXPORT_FLAVOR}" | jq
           EXPORTS=$(curl -X GET -H "training-key: ${CUSTOM_VISION_TRAINING_KEY}" "https://${CUSTOM_VISION_ENDPOINT}/customvision/v3.3/training/projects/${CUSTOM_VISION_PROJECT_ID}/iterations/${CUSTOM_VISION_ITERATION_ID}/export")
           DOWNLOAD_URI=$(echo ${EXPORTS} | jq -r ".[] | select(.platform == \"DockerFile\") | .downloadUri")
           FILE_NAME=$(echo ${DOWNLOAD_URI) | sed -r "s/.*\/([^\/]*.zip)\?.*/\\1/g")
