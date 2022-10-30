@@ -1,4 +1,4 @@
-name: Docker
+name: Export a model, build and publish it
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -24,7 +24,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}/custom-vision
   CUSTOM_VISION_ENDPOINT: cvisionedgeaidebug.cognitiveservices.azure.com
   CUSTOM_VISION_PROJECT_ID: c7e5e1ee-b55b-4d4a-9341-5e8323bc0af2
-  CUSTOM_VISION_ITERATION_ID: ${{ github.events.inputs.iteration_id }}
+  CUSTOM_VISION_ITERATION_ID: ${{ github.event.inputs.iteration_id }}
   CUSTOM_VISION_EXPORT_PLATFORM: Dockerfile
   CUSTOM_VISION_EXPORT_FLAVOR: Linux
   CUSTOM_VISION_EXPORTED_MODEL_ARTIFACT_NAME: exported-model
