@@ -1,9 +1,17 @@
 # Edge AI における CI/CD を GitHub で構成するデモ
 
-Configure with Azure IoT Edge, Custom Vision in Azure Cognitive Services, and GitHub Actions
+このリポジトリは、[【オンライン】エッジAI入門＆活用シリーズ#3『AzureDevOps/GitHubでCI/CD』編 - connpass](https://algyan.connpass.com/event/261938/) のセッションで利用します。
+
+## リポジトリの内容
+
+- セッション資料
+  - [セッション資料 (Marp 用 Markdown)](./docs/deck.md)
+    - [Marp for VS Code](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode) で表示するときれいに参照できます
+  - [セッション資料（PDF）](./docs/deck.pdf)
+- デモ用のワークフロー 
 
 
-## 資料
+## 参考資料
 
 
 ### Azure Custom Vision によるイテレーション（モデル）のエクスポート
