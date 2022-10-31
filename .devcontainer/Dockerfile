@@ -11,4 +11,4 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 #     && rm -rf /var/lib/apt/lists/*
 
 # Install azure-iot extension
-az extension add --name azure-iot
+RUN az extension add --name azure-iot
