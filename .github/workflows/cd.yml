@@ -1,14 +1,22 @@
 name: Deploy to IoT Edge
 
 on:
+  workflow_call:
+    inputs:
+      iteration_id:
+        description: Custom Vision の Iteration ID
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       iteration_id:
         description: Custom Vision の Iteration ID
+        required: true
+        type: string
 
 env:
   CUSTOM_VISION_EXPORTED_MODEL_IMAGE: ghcr.io/dzeyelid/edgeai-cicd-with-github-demo/custom-vision
-  CUSTOM_VISION_ITERATION_ID: ${{ github.event.inputs.iteration_id }}
+  CUSTOM_VISION_ITERATION_ID: ${{ github.event.inputs.iteration_id || inputs.iteration_id }}
   IOT_HUB_NAME: iot-edgeai-debug
   IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME: deployment_${{ github.event.inputs.iteration_id }}.json
   IOT_EDGE_TARGET_CONDITION: tags.environment='demo'

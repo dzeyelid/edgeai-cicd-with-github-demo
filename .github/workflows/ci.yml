@@ -6,8 +6,8 @@ name: Export a model, build and publish it
 # documentation.
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -150,3 +150,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+
+  deploy:
+    name: Deploy to IoT Edge
+    needs:
+      - read_iteration
+      - build_and_push
+    uses: ./.github/workflows/cd.yml
+    with:
+      iteration_id: ${{ needs.read_iteration.outputs.CUSTOM_VISION_ITERATION_ID }}
+    secrets: inherit
