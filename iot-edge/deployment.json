@@ -35,6 +35,7 @@
           },
           "modules": {
             "custom-vision": {
+              "version": "",
               "restartPolicy": "always",
               "settings": {
                 "image": "ghcr.io/dzeyelid/edgeai-cicd-with-github-demo/custom-vision:latest",

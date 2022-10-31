@@ -42,6 +42,8 @@ jobs:
             jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".runtime.settings.registryCredentials.ghcr.password=\"${PAT_FOR_CONTAINER_REGISTRY}\"")
           DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | \
             jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".settings.image=\"${CUSTOM_VISION_EXPORTED_MODEL_IMAGE}:${CUSTOM_VISION_ITERATION_ID}\"")
+          DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | \
+            jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".version=\"${CUSTOM_VISION_MODEL_VERSION}\"")
           echo $DEPLOYMENT_JSON | jq > ${IOT_EDGE_DEPLOYMENT_MANIFEST_FILE_NAME}
         env:
           PAT_FOR_CONTAINER_REGISTRY: ${{ secrets.PAT_FOR_CONTAINER_REGISTRY }}

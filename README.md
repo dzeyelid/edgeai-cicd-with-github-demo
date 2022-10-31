@@ -22,10 +22,11 @@ Configure with Azure IoT Edge, Custom Vision in Azure Cognitive Services, and Gi
 
 ### Azure IoT Edge
 
-- [Deploy modules from the Azure CLI command line - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/how-to-deploy-modules-cli?view=iotedge-1.4)
-- [Deploy modules at scale using Azure CLI - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/how-to-deploy-cli-at-scale?view=iotedge-1.4)
-- [Deploy module & routes with deployment manifests - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-edge/module-composition?view=iotedge-1.4)
-- [Understand Azure IoT Hub device twins | Microsoft Learn](https://learn.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-device-twins?view=iotedge-1.4)
+- [Azure CLI コマンド ラインからモジュールをデプロイする - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/iot-edge/how-to-deploy-modules-cli?view=iotedge-1.4)
+- [Azure CLI を使用した大規模なモジュールの展開 - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/iot-edge/how-to-deploy-cli-at-scale?view=iotedge-1.4)
+- [デプロイ マニフェストを使ってモジュールとルートをデプロイする - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/iot-edge/module-composition?view=iotedge-1.4)
+- [Azure IoT Hub デバイス ツインについて | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/iot-hub/iot-hub-devguide-device-twins?view=iotedge-1.4)
+- [Azure IoT Edge デバイスに対する継続的インテグレーションと継続的配置 - Azure IoT Edge | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/iot-edge/how-to-continuous-integration-continuous-deployment?view=iotedge-1.4)
 
 
 ### 分類用の画像データセット
@@ -78,7 +79,8 @@ pushd temp
 
 DEPLOYMENT_JSON=$(cat ../iot-edge/deployment.json)
 DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".runtime.settings.registryCredentials.ghcr.password=\"${PAT_FOR_CONTAINER_REGISTRY}\"")
-DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".settings.image=\"ghcr.io/dzeyelid/custom-vision:${CUSTOM_VISION_MODEL_VERSION}\"")
+DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".settings.image=\"ghcr.io/dzeyelid/edgeai-cicd-with-github-demo/custom-vision:${CUSTOM_VISION_MODEL_VERSION}\"")
+DEPLOYMENT_JSON=$(echo $DEPLOYMENT_JSON | jq ".content.modulesContent.\"\$edgeAgent\".\"properties.desired\".modules.\"custom-vision\".version=\"${CUSTOM_VISION_MODEL_VERSION}\"")
 echo $DEPLOYMENT_JSON | jq > iot-edge_deployment.json
 
 az login
