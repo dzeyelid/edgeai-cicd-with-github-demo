@@ -41,7 +41,7 @@ Zenn: [dzeyelid](https://zenn.dev/dzeyelid)
 
 ----
 
-## GitHub における CI/CD
+## GitHub における CI/CD に関連したサービス
 
 | 関連するサービス | 説明 |
 |----|----|
@@ -49,6 +49,10 @@ Zenn: [dzeyelid](https://zenn.dev/dzeyelid)
 | GitHub Marketplace | GitHub Actions で利用できるアクションを探すことができる |
 | GitHub Packages | 様々な言語に対応したパッケージレジストリ |
 | GitHub Container Registry | コンテナイメージのレジストリ<br/>（GitHub Packages の一部） |
+
+----
+
+## GitHub Actions
 
 ----
 
@@ -74,6 +78,8 @@ OSSで構成された処理のコンポーネント
 - [Marketplace](https://github.com/marketplace?type=actions)
   - Verified creator や登録されたアクションを検索できる
 - OSSで公開されているリポジトリ
+- シェルスクリプトの実行
+  - bash, PowerShell
 
 ----
 
@@ -120,6 +126,17 @@ OSSで構成された処理のコンポーネント
 - Branch Protection rule（ブランチ保護ルール）の _Require status checks to pass before merging_ を有効化することで、プルリクエストに対するワークフローの実行ステータスが成功した場合のみマージできるよう制限できる
 - コードの品質保持やセキュリティ対策を行える
 - 参考: [About protected branches - GitHub Docs](https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches)
+
+----
+
+## GitHub Container Registry
+
+----
+
+## GitHub Container Registry とは
+
+- コンテナイメージを格納、配布できるレジストリ
+- GitHub の認証を用いてアクセスできる
 
 ----
 
