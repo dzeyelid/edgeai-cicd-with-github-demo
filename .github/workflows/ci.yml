@@ -97,9 +97,9 @@ jobs:
       - read_iteration
       - download_model
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    # permissions:
+    #   contents: read
+    #   packages: write
     defaults:
       run:
         working-directory: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
@@ -124,7 +124,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PAT_FOR_CONTAINER_REGISTRY }}
 
 
       # Extract metadata (tags, labels) for Docker
