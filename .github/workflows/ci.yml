@@ -100,7 +100,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # id-token: write
     defaults:
       run:
         working-directory: ${{ env.CUSTOM_VISION_EXPORTED_MODEL_PATH }}
